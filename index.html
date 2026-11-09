@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICS – Gra z fizyki</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">⚛ PHYSICS</div>
+    <div class="header-label">EDUKACYJNA GRA Z FIZYKI</div>
+</header>
+
+<main>
+
+    <!-- MENU GŁÓWNE -->
+    <section id="home" class="screen">
+        <div class="tag">NAUKA • RYWALIZACJA • ZABAWA</div>
+
+        <h1>Odkryj świat<br><span>fizyki!</span></h1>
+
+        <p class="subtitle">
+            Sprawdź swoją wiedzę i rywalizuj z innymi.
+        </p>
+
+        <div class="choices">
+
+            <div class="card">
+                <div class="big-icon">🎓</div>
+                <h2>Jestem nauczycielem</h2>
+                <p>Utwórz pokój i poprowadź rozgrywkę.</p>
+
+                <button onclick="showScreen('teacherSetup')">
+                    UTWÓRZ GRĘ →
+                </button>
+            </div>
+
+            <div class="card purple">
+                <div class="big-icon">🚀</div>
+                <h2>Jestem uczniem</h2>
+                <p>Dołącz do gry za pomocą kodu.</p>
+
+                <button onclick="showScreen('studentJoin')">
+                    DOŁĄCZ DO GRY →
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- PANEL NAUCZYCIELA -->
+    <section id="teacherSetup" class="screen hidden">
+
+        <button class="back" onclick="showScreen('home')">
+            ← Powrót
+        </button>
+
+        <div class="tag">PANEL NAUCZYCIELA</div>
+
+        <h1>Przygotuj <span>grę</span></h1>
+
+        <div class="form-card">
+
+            <label>Klasy</label>
+
+            <div class="static-value">
+                Klasa 7 i 8
+            </div>
+
+
+            <label>Wybierz tematy</label>
+
+            <!-- WYSZUKIWARKA -->
+            <input
+                type="search"
+                id="topicSearch"
+                class="topic-search"
+                placeholder="🔎 Wyszukaj temat..."
+                autocomplete="off"
+                oninput="filterTopics()"
+            >
+
+            <div class="topic-search-info">
+                Możesz zaznaczyć jeden lub kilka tematów.
+            </div>
+
+
+            <!-- LISTA TEMATÓW -->
+            <div class="topic-list" id="topicList">
+
+                <h3 class="topic-heading">KLASA 7</h3>
+
+                <label class="topic-option"
+                    data-search="pomiary wielkości fizyczne jednostki">
+                    <input type="checkbox" name="topics" value="pomiary">
+                    <span>Pomiary i wielkości fizyczne</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="materia właściwości ciała gęstość atomy">
+                    <input type="checkbox" name="topics" value="materia">
+                    <span>Właściwości materii</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="ciśnienie siły ciecze hydrostatyczne">
+                    <input type="checkbox" name="topics" value="cisnienie">
+                    <span>Ciśnienie i siły w cieczach</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="ruch prędkość droga czas przyspieszenie">
+                    <input type="checkbox" name="topics" value="ruch">
+                    <span>Ruch i prędkość</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="siły oddziaływania dynamika newton tarcie">
+                    <input type="checkbox" name="topics" value="sily">
+                    <span>Siły i oddziaływania</span>
+                </label>
+
+
+                <h3 class="topic-heading">KLASA 8</h3>
+
+                <label class="topic-option"
+                    data-search="praca moc mechaniczna wat dżul">
+                    <input type="checkbox" name="topics" value="praca_moc">
+                    <span>Praca i moc</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="energia kinetyczna potencjalna zachowanie energii">
+                    <input type="checkbox" name="topics" value="energia">
+                    <span>Energia i zasada zachowania energii</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="ciepło temperatura ogrzewanie parowanie">
+                    <input type="checkbox" name="topics" value="cieplo">
+                    <span>Ciepło i zjawiska cieplne</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="elektryczność magnetyzm prąd napięcie opór">
+                    <input type="checkbox" name="topics" value="elektrycznosc">
+                    <span>Elektryczność i magnetyzm</span>
+                </label>
+
+                <label class="topic-option"
+                    data-search="drgania fale dźwięk optyka światło">
+                    <input type="checkbox" name="topics" value="fale_optyka">
+                    <span>Drgania, fale, dźwięk i optyka</span>
+                </label>
+
+            </div>
+
+            <div class="selected-topics">
+                Zaznaczone tematy:
+                <strong id="selectedTopicCount">0</strong>
+            </div>
+
+
+            <label for="questionCount">Liczba pytań</label>
+
+            <select id="questionCount">
+                <option value="5">5 pytań</option>
+                <option value="10">10 pytań</option>
+                <option value="15" selected>15 pytań</option>
+                <option value="20">20 pytań</option>
+                <option value="30">30 pytań</option>
+                <option value="40">40 pytań</option>
+                <option value="50">50 pytań</option>
+            </select>
+
+
+            <label for="questionTime">Czas na odpowiedź</label>
+
+            <select id="questionTime">
+                <option value="10">10 sekund</option>
+                <option value="15">15 sekund</option>
+                <option value="20" selected>20 sekund</option>
+                <option value="30">30 sekund</option>
+                <option value="45">45 sekund</option>
+                <option value="60">60 sekund</option>
+            </select>
+
+
+            <button onclick="createRoom()">
+                UTWÓRZ POKÓJ →
+            </button>
+
+            <p id="teacherError" class="error"></p>
+
+        </div>
+    </section>
+
+
+    <!-- PANEL UCZNIA – DOŁĄCZANIE -->
+    <section id="studentJoin" class="screen hidden">
+
+        <button class="back" onclick="showScreen('home')">
+            ← Powrót
+        </button>
+
+        <div class="tag">PANEL UCZNIA</div>
+
+        <h1>Dołącz do <span>gry</span></h1>
+
+        <div class="form-card">
+
+            <label for="roomInput">Kod pokoju</label>
+
+            <input
+                id="roomInput"
+                placeholder="NP. 123456"
+                maxlength="6"
+                inputmode="numeric"
+            >
+
+            <label for="nicknameInput">Twój nick</label>
+
+            <input
+                id="nicknameInput"
+                placeholder="Wpisz swój nick"
+                maxlength="16"
+            >
+
+            <button onclick="joinRoom()">
+                DOŁĄCZ →
+            </button>
+
+            <p id="studentError" class="error"></p>
+
+        </div>
+    </section>
+
+
+    <!-- POCZEKALNIA NAUCZYCIELA -->
+    <section id="teacherLobby" class="screen hidden">
+
+        <div class="tag">POCZEKALNIA NAUCZYCIELA</div>
+
+        <h1>Pokój <span id="roomCodeDisplay"></span></h1>
+
+        <div class="code-box" id="roomCodeBig"></div>
+
+        <p class="subtitle">
+            Podaj uczniom kod lub wyświetl go na projektorze.
+        </p>
+
+        <div class="form-card">
+
+            <h2>
+                Uczestnicy:
+                <span id="playerCount">0</span>
+            </h2>
+
+            <div id="lobbyPlayers" class="player-list">
+                Oczekiwanie na uczniów...
+            </div>
+
+            <button onclick="startGame()">
+                ROZPOCZNIJ GRĘ →
+            </button>
+
+            <button class="secondary" onclick="projectorMode()">
+                TRYB PROJEKTORA ⛶
+            </button>
+
+        </div>
+    </section>
+
+
+    <!-- POCZEKALNIA UCZNIA -->
+    <section id="studentLobby" class="screen hidden">
+
+        <div class="tag">POCZEKALNIA UCZNIA</div>
+
+        <h1>Witaj, <span id="studentName"></span>!</h1>
+
+        <p class="subtitle">
+            Udało Ci się dołączyć do pokoju.
+        </p>
+
+        <div class="form-card waiting">
+
+            <div class="big-icon">⏳</div>
+
+            <h2>Czekaj na nauczyciela</h2>
+
+            <p>
+                Gra rozpocznie się, gdy nauczyciel uruchomi pierwsze pytanie.
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- GRA NAUCZYCIELA -->
+    <section id="teacherGame" class="screen hidden">
+
+        <div class="game-top">
+            <span id="teacherQuestionNumber">PYTANIE 1</span>
+            <span id="teacherTimer">20 s</span>
+        </div>
+
+        <h1 id="teacherQuestion" class="question-title"></h1>
+
+        <div id="teacherOptions" class="options"></div>
+
+        <div class="form-card">
+
+            <h2>
+                Odpowiedzi:
+                <span id="answerCount">0</span> /
+                <span id="gamePlayerCount">0</span>
+            </h2>
+
+            <div id="teacherExplanation" class="explanation"></div>
+
+            <div id="teacherRanking" class="ranking"></div>
+
+            <button
+                id="nextButton"
+                class="hidden"
+                onclick="nextQuestion()"
+            >
+                NASTĘPNE PYTANIE →
+            </button>
+
+            <button class="secondary" onclick="projectorMode()">
+                TRYB PROJEKTORA ⛶
+            </button>
+
+        </div>
+    </section>
+
+
+    <!-- GRA UCZNIA -->
+    <section id="studentGame" class="screen hidden">
+
+        <div class="game-top">
+            <span id="studentQuestionNumber">PYTANIE 1</span>
+            <span id="studentTimer">20 s</span>
+        </div>
+
+        <h1 id="studentQuestion" class="question-title"></h1>
+
+        <div id="studentOptions" class="options"></div>
+
+        <p id="studentFeedback" class="feedback"></p>
+
+    </section>
+
+
+    <!-- WYNIKI -->
+    <section id="results" class="screen hidden">
+
+        <div class="tag">KONIEC ROZGRYWKI</div>
+
+        <h1>Wyniki <span>gry</span></h1>
+
+        <div class="form-card">
+
+            <div class="big-icon">🏆</div>
+
+            <h2>Ranking końcowy</h2>
+
+            <div id="finalRanking" class="ranking"></div>
+
+            <button onclick="location.reload()">
+                WRÓĆ DO MENU
+            </button>
+
+            <button class="secondary" onclick="projectorMode()">
+                WYŚWIETL NA PROJEKTORZE ⛶
+            </button>
+
+        </div>
+    </section>
+
+    <div id="connectionStatus" class="connection-status">
+        Oczekiwanie na połączenie
+    </div>
+
+</main>
+
+<footer>
+    PHYSICS • UCZ SIĘ PRZEZ ZABAWĘ
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
