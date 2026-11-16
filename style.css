@@ -1439,3 +1439,30 @@ label {
         grid-template-columns: 1fr;
     }
 }
+.rainbow-nickname {
+    font-weight: 900;
+    background: linear-gradient(
+        90deg,
+        #ff3333,
+        #ff9900,
+        #ffee00,
+        #33cc66,
+        #3399ff,
+        #bb55ff,
+        #ff3399
+    );
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: rainbowNickname 3s linear infinite;
+}
+
+@keyframes rainbowNickname {
+    from {
+        background-position: 0% 50%;
+    }
+    to {
+        background-position: 300% 50%;
+    }
+}
