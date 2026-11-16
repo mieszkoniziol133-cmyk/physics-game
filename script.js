@@ -137,21 +137,22 @@ function connectChannel(code) {
     });
 
     channel
-        .on("broadcast", { event: "player_join" }, ({ payload }) => {
-            if (role !== "teacher") return;
+    .on("broadcast", { event: "player_join" }, ({ payload }) => {
+        if (role !== "teacher") return;
 
-            if (!players.some(p => p.id === payload.id)) {
-                players.push({
-                    id: payload.id,
-                    nickname: payload.nickname,
-                    score: 0
-                });
-            }
+        if (!players.some(p => p.id === payload.id)) {
+            players.push({
+                id: payload.id,
+                nickname: payload.nickname,
+                nicknameColor: payload.nicknameColor || null,
+                score: 0
+            });
+        }
 
-            renderLobbyPlayers();
+        renderLobbyPlayers();
 
-            sendEvent("player_list", { players });
-        })
+        sendEvent("player_list", { players });
+    })
 
         .on("broadcast", { event: "player_list" }, ({ payload }) => {
             if (role === "student") {
@@ -1785,7 +1786,49 @@ console.log("Wylosowano:", gameQuestions.length);
     renderLobbyPlayers();
     showScreen("teacherLobby");
 }
+function parseColoredNickname(input) {
+    const colors = {
+        czerwony: "#ff3333",
+        zielony: "#00cc66",
+        niebieski: "#3399ff",
+        zolty: "#ffcc00",
+        żółty: "#ffcc00",
+        fioletowy: "#bb55ff",
+        rozowy: "#ff66aa",
+        różowy: "#ff66aa",
+        pomaranczowy: "#ff8800",
+        pomarańczowy: "#ff8800",
+        bialy: "#ffffff",
+        biały: "#ffffff",
+        czarny: "#222222"
+    };
 
+    const match = input.match(/^\/([^/]+)\/(.+)$/);
+
+    if (!match) {
+        return {
+            nickname: input,
+            color: null
+        };
+    }
+
+    const command = match[1].toLowerCase();
+    const name = match[2].trim();
+
+    if (!name || (!colors[command] && command !== "kolorowy" && command !== "teczowy" && command !== "tęczowy")) {
+        return {
+            nickname: input,
+            color: null
+        };
+    }
+
+    return {
+        nickname: name,
+        color: command === "kolorowy" || command === "teczowy" || command === "tęczowy"
+            ? "rainbow"
+            : colors[command]
+    };
+}
 function joinRoom() {
     if (!db) {
         $("joinMessage").textContent = "Brak połączenia z serwerem.";
@@ -1793,7 +1836,11 @@ function joinRoom() {
     }
 
     roomCode = $("joinCode").value.trim();
-    nickname = $("nickname").value.trim();
+
+    const rawNickname = $("nickname").value.trim();
+    const parsedNickname = parseColoredNickname(rawNickname);
+
+    nickname = parsedNickname.nickname;
 
     if (!/^\d{6}$/.test(roomCode)) {
         $("joinMessage").textContent = "Wpisz poprawny kod pokoju.";
@@ -1802,6 +1849,11 @@ function joinRoom() {
 
     if (!nickname) {
         $("joinMessage").textContent = "Wpisz swój nick.";
+        return;
+    }
+
+    if (nickname.length > 20) {
+        $("joinMessage").textContent = "Nick może mieć maksymalnie 20 znaków.";
         return;
     }
 
@@ -1819,18 +1871,38 @@ function joinRoom() {
     setTimeout(() => {
         sendEvent("player_join", {
             id: studentId,
-            nickname
+            nickname,
+            nicknameColor: parsedNickname.color
         });
     }, 1000);
 }
+function coloredNicknameHTML(player) {
+    const name = escapeHTML(player.nickname || "");
+    const color = player.nicknameColor;
 
+    if (color === "rainbow") {
+        return `
+            <span class="rainbow-nickname">${name}</span>
+        `;
+    }
+
+    if (color && /^#[0-9a-fA-F]{6}$/.test(color)) {
+        return `
+            <span style="color: ${color}; font-weight: 800;">
+                ${name}
+            </span>
+        `;
+    }
+
+    return name;
+}
 function renderLobbyPlayers() {
     const box = $("lobbyPlayers");
     if (!box) return;
 
     box.innerHTML = players.map(player => `
         <div class="player-row">
-            <span>${escapeHTML(player.nickname)}</span>
+            <span>${coloredNicknameHTML(player)}</span>
             <b>Gotowy</b>
         </div>
     `).join("");
@@ -2084,6 +2156,10 @@ function showStudentReveal(data) {
         <p>Poprawna odpowiedź:
         <b>${escapeHTML(data.correctText)}</b></p>
         <p>${escapeHTML(data.explanation)}</p>
+
+        <h3>Ranking po pytaniu</h3>
+        ${data.ranking ? rankingHTML(data.ranking) : ""}
+
         <p class="muted">Czekaj na następne pytanie.</p>
     `;
 }
@@ -2101,7 +2177,7 @@ function rankingHTML(ranking = getRanking()) {
 
     return ranking.map((player, index) => `
         <div class="ranking-row">
-            <span>${index + 1}. ${escapeHTML(player.nickname)}</span>
+            <span>${index + 1}. ${coloredNicknameHTML(player)}</span>
             <b>${Number(player.score)} pkt</b>
         </div>
     `).join("");
