@@ -1940,16 +1940,30 @@ function copyRoomCode() {
 ========================================= */
 
 function shuffleQuestion(question) {
-    const [text, options, correct, explanation] = question;
+    if (!Array.isArray(question) || question.length < 3) {
+        return question;
+    }
+
+    const text = question[0];
+    const options = question[1];
+    const correct = question[2];
+    const explanation = question[3] || "";
+
+    if (!Array.isArray(options) || options.length === 0) {
+        return question;
+    }
 
     const shuffled = options.map((answer, index) => ({
-        answer,
+        answer: answer,
         isCorrect: index === correct
     }));
 
     for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+
+        const temp = shuffled[i];
+        shuffled[i] = shuffled[j];
+        shuffled[j] = temp;
     }
 
     return [
