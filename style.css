@@ -1466,3 +1466,253 @@ label {
         background-position: 300% 50%;
     }
 }
+.matrix-nickname {
+    font-weight: 900;
+    background: linear-gradient(
+        90deg,
+        #001a00,
+        #00ff00,
+        #003b00,
+        #39ff14,
+        #001a00
+    );
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: matrixNickname 2.5s linear infinite;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.35);
+}
+
+@keyframes matrixNickname {
+    from {
+        background-position: 0% 50%;
+    }
+    to {
+        background-position: 300% 50%;
+    }
+}
+.matrix-nickname {
+    font-weight: 900;
+    background: linear-gradient(
+        90deg,
+        #000000 0%,
+        #000000 25%,
+        #00ff00 50%,
+        #000000 75%,
+        #000000 100%
+    );
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: matrixNickname 3s linear infinite;
+}
+
+@keyframes matrixNickname {
+    from {
+        background-position: 100% 50%;
+    }
+    to {
+        background-position: -200% 50%;
+    }
+}
+.fire-nickname {
+    display: inline-block;
+    font-weight: 1000;
+
+    background: linear-gradient(
+        0deg,
+        #8b0000 0%,
+        #ff2200 20%,
+        #ff6600 40%,
+        #ffcc00 65%,
+        #fff4b0 80%,
+        #ff6600 100%
+    );
+
+    background-size: 100% 250%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+
+    animation: fireMove 1.2s ease-in-out infinite alternate;
+
+    filter: drop-shadow(0 0 3px #ff3300)
+            drop-shadow(0 0 7px #ff6600);
+}
+
+@keyframes fireMove {
+    0% {
+        background-position: 50% 0%;
+        transform: translateY(0);
+        filter: drop-shadow(0 0 3px #ff3300);
+    }
+
+    50% {
+        background-position: 50% 50%;
+        transform: translateY(-1px);
+        filter: drop-shadow(0 0 7px #ff6600);
+    }
+
+    100% {
+        background-position: 50% 100%;
+        transform: translateY(1px);
+        filter: drop-shadow(0 0 5px #ffcc00);
+    }
+}
+.secret-dot {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.secret-dot:hover {
+    opacity: 0.7;
+}
+
+.secret-effect {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.94);
+    color: white;
+    font-family: monospace;
+    text-align: center;
+    overflow: hidden;
+    animation: secretAppear 0.4s ease;
+}
+
+.secret-effect h1 {
+    font-size: clamp(32px, 7vw, 75px);
+    margin: 10px;
+    letter-spacing: 5px;
+}
+
+.secret-effect p {
+    font-size: 17px;
+}
+
+.secret-close {
+    margin-top: 25px;
+    padding: 12px 25px;
+    background: transparent;
+    color: white;
+    border: 1px solid currentColor;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.secret-close:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.secret-matrix {
+    color: #35ff72;
+    text-shadow: 0 0 12px #00ff44;
+}
+
+.secret-nuclear {
+    color: #ffcf40;
+    text-shadow: 0 0 20px #ff8c00;
+}
+
+.secret-reactor {
+    font-size: 100px;
+    animation: reactorPulse 1s infinite alternate;
+}
+
+.secret-god {
+    color: #fff;
+    text-shadow: 0 0 15px #fff, 0 0 40px #8b5cf6;
+}
+
+.secret-confetti {
+    position: absolute;
+    top: -20px;
+    width: 8px;
+    height: 14px;
+    background: white;
+    animation: secretFall 3s linear forwards;
+}
+
+@keyframes secretAppear {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes reactorPulse {
+    from { transform: scale(0.85); filter: brightness(0.7); }
+    to { transform: scale(1.15); filter: brightness(1.6); }
+}
+
+@keyframes secretFall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+    }
+}
+
+.hidden-mode {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: #050505;
+    color: #00ff75;
+    font-family: monospace;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: auto;
+}
+
+.hidden-mode h1 {
+    font-size: clamp(30px, 6vw, 65px);
+    text-shadow: 0 0 20px currentColor;
+}
+
+.hidden-mode p {
+    font-size: 17px;
+}
+
+.hidden-mode button {
+    margin: 10px;
+    padding: 13px 24px;
+    color: inherit;
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+}
+
+.hidden-mode button:hover {
+    background: #ffffff20;
+}
+
+.hidden-mode.blackout {
+    background: #100000;
+    color: #ff3030;
+}
+
+.hidden-mode.reactor {
+    background: #10100a;
+    color: #ffd34d;
+}
+
+.hidden-mode.labmaster {
+    background: #07101d;
+    color: #55c8ff;
+}
