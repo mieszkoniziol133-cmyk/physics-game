@@ -6765,7 +6765,7 @@ function runNuclear() {
 function runGodMode() {
     const overlay = showSecretEffect(
         "GOD MODE",
-        "ODBLOCKOWANO TAJNY TRYB PHYSICS!",
+        "ODBLOKOWANO TAJNY TRYB PHYSICS!",
         "secret-god",
         "★"
     );
