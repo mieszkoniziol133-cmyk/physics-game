@@ -1815,17 +1815,31 @@ function parseColoredNickname(input) {
     const command = match[1].toLowerCase();
     const name = match[2].trim();
 
-    if (!name || (!colors[command] && command !== "kolorowy" && command !== "teczowy" && command !== "tęczowy")) {
-        return {
-            nickname: input,
-            color: null
-        };
-    }
-
+    if (
+    !name ||
+    (
+        !colors[command] &&
+        command !== "kolorowy" &&
+        command !== "teczowy" &&
+        command !== "tęczowy" &&
+        command !== "matrix" &&
+        command !== "ognisty" &&
+        command !== "ogien"
+    )
+) {
+    return {
+        nickname: input,
+        color: null
+    };
+}
     return {
         nickname: name,
         color: command === "kolorowy" || command === "teczowy" || command === "tęczowy"
             ? "rainbow"
+            : command === "matrix"
+            ? "matrix"
+            : command === "ognisty" || command === "ogien"
+            ? "fire"
             : colors[command]
     };
 }
@@ -1886,6 +1900,14 @@ function coloredNicknameHTML(player) {
         `;
     }
 
+    if (color === "matrix") {
+        return `<span class="matrix-nickname">${name}</span>`;
+    }
+
+    if (color === "fire") {
+        return `<span class="fire-nickname">${name}</span>`;
+    }
+
     if (color && /^#[0-9a-fA-F]{6}$/.test(color)) {
         return `
             <span style="color: ${color}; font-weight: 800;">
@@ -1917,6 +1939,27 @@ function copyRoomCode() {
    GRA – NAUCZYCIEL
 ========================================= */
 
+function shuffleQuestion(question) {
+    const [text, options, correct, explanation] = question;
+
+    const shuffled = options.map((answer, index) => ({
+        answer,
+        isCorrect: index === correct
+    }));
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return [
+        text,
+        shuffled.map(item => item.answer),
+        shuffled.findIndex(item => item.isCorrect),
+        explanation
+    ];
+}
+
 function startGame() {
     if (role !== "teacher" || !gameQuestions.length) return;
 
@@ -1934,7 +1977,7 @@ function startQuestion() {
     questionEnded = false;
     receivedAnswers = {};
 
-    const data = gameQuestions[currentQuestion];
+    const data = shuffleQuestion(gameQuestions[currentQuestion]);
     const time = Number($("questionTime").value);
 
     questionDeadline = Date.now() + time * 1000;
@@ -6635,3 +6678,235 @@ function physicsCheckAllAnswered() {
 
     return false;
 }
+
+
+
+
+function closeSecretEffect() {
+    document.querySelector(".secret-effect")?.remove();
+}
+
+function showSecretEffect(title, description, className, symbol = "") {
+    closeSecretEffect();
+
+    const overlay = document.createElement("div");
+    overlay.className = `secret-effect ${className}`;
+
+    const heading = document.createElement("h1");
+    heading.textContent = title;
+
+    const icon = document.createElement("div");
+    icon.className = "secret-reactor";
+    icon.textContent = symbol;
+
+    const message = document.createElement("p");
+    message.textContent = description;
+
+    const close = document.createElement("button");
+    close.className = "secret-close";
+    close.textContent = "ZAMKNIJ";
+    close.addEventListener("click", closeSecretEffect);
+
+    overlay.append(icon, heading, message, close);
+    document.body.appendChild(overlay);
+
+    return overlay;
+}
+
+function runMatrix() {
+    const overlay = showSecretEffect(
+        "MATRIX",
+        "SYSTEM ZOSTAŁ PRZEJĘTY...",
+        "secret-matrix",
+        "010101"
+    );
+
+    const symbols = "01アイウエオカキクケコ";
+    const rain = document.createElement("div");
+    rain.style.fontSize = "22px";
+    rain.style.lineHeight = "1.5";
+    rain.style.opacity = "0.8";
+    rain.style.wordBreak = "break-all";
+    rain.style.maxWidth = "90%";
+    rain.style.maxHeight = "35vh";
+    rain.style.overflow = "hidden";
+
+    rain.textContent = Array.from(
+        { length: 500 },
+        () => symbols[Math.floor(Math.random() * symbols.length)]
+    ).join(" ");
+
+    overlay.insertBefore(rain, overlay.querySelector("h1"));
+}
+
+function runNuclear() {
+    showSecretEffect(
+        "REAKTOR URUCHOMIONY",
+        "SYMULACJA PHYSICS: moc 100% | SYSTEM STABILNY",
+        "secret-nuclear",
+        "☢"
+    );
+}
+
+function runGodMode() {
+    const overlay = showSecretEffect(
+        "GOD MODE",
+        "ODBLOCKOWANO TAJNY TRYB PHYSICS!",
+        "secret-god",
+        "★"
+    );
+
+    for (let i = 0; i < 100; i++) {
+        const piece = document.createElement("div");
+        piece.className = "secret-confetti";
+        piece.style.left = Math.random() * 100 + "%";
+        piece.style.animationDelay = Math.random() * 2 + "s";
+        piece.style.background =
+            `hsl(${Math.random() * 360}, 100%, 60%)`;
+
+        overlay.appendChild(piece);
+    }
+}
+
+
+function openHiddenMode(title, description, modeClass, extra = null) {
+    document.querySelectorAll(".hidden-mode").forEach(el => el.remove());
+
+    const panel = document.createElement("div");
+    panel.className = "hidden-mode " + modeClass;
+
+    const heading = document.createElement("h1");
+    heading.textContent = title;
+
+    const descriptionElement = document.createElement("p");
+    descriptionElement.textContent = description;
+
+    panel.append(heading, descriptionElement);
+
+    if (extra) {
+        const extraElement = document.createElement("p");
+        extraElement.textContent = extra;
+        panel.appendChild(extraElement);
+    }
+
+    const exit = document.createElement("button");
+    exit.textContent = "WYJDŹ Z TRYBU";
+    exit.addEventListener("click", () => panel.remove());
+
+    panel.appendChild(exit);
+    document.body.appendChild(panel);
+}
+
+function runHiddenMode(code) {
+    switch (code) {
+        case "HACKER":
+            openHiddenMode(
+                "HACKER MODE",
+                "TAJNY DOSTĘP DO SYSTEMU PHYSICS",
+                "",
+                "SYSTEM: ONLINE | SECURITY: OVERRIDDEN | ACCESS: ROOT"
+            );
+            break;
+
+        case "REACTOR":
+            openHiddenMode(
+                "NUCLEAR CONTROL",
+                "CENTRUM STEROWANIA ELEKTROWNIĄ",
+                "reactor",
+                "REAKTOR: SYMULACJA | MOC: 100% | CHŁODZENIE: AKTYWNE | STATUS: STABILNY"
+            );
+            break;
+
+        case "BLACKOUT":
+            openHiddenMode(
+                "BLACKOUT",
+                "UWAGA: SYMULOWANA AWARIA ZASILANIA",
+                "blackout",
+                "SYSTEM AWARYJNY | ZASILANIE: WYŁĄCZONE"
+            );
+            break;
+
+        case "LABMASTER": {
+            const panel = openHiddenMode(
+                "LAB MASTER",
+                "ODKRYTO TAJNY DOSTĘP DO PHYSICS LAB",
+                "labmaster",
+                "STATUS: DOSTĘP SPECJALNY"
+            );
+
+            const labButton = document.createElement("button");
+            labButton.textContent = "OTWÓRZ PHYSICS LAB";
+
+            labButton.addEventListener("click", () => {
+                panel.remove();
+
+                if (typeof openLab === "function") {
+                    openLab();
+                } else {
+                    alert("Nie znaleziono funkcji openLab().");
+                }
+            });
+
+            panel.insertBefore(labButton, panel.lastChild);
+            break;
+        }
+
+        case "RESET":
+            document.querySelectorAll(".hidden-mode, .secret-effect")
+                .forEach(el => el.remove());
+            break;
+
+        default:
+            return false;
+    }
+
+    return true;
+}
+
+
+function openSecretTerminal() {
+    const code = prompt(
+        "PHYSICS SECRET TERMINAL\nWpisz tajny kod:"
+    );
+
+    if (code === null) return;
+
+    const command = code.trim().toUpperCase();
+
+    if (runHiddenMode(command)) return;
+
+    switch (command) {
+        case "PHYSICS":
+            showSecretEffect(
+                "PHYSICS SYSTEM",
+                "Witaj w ukrytym centrum dowodzenia.",
+                "",
+                "⚛"
+            );
+            break;
+
+        case "MATRIX":
+            runMatrix();
+            break;
+
+        case "NUCLEAR":
+            runNuclear();
+            break;
+
+        case "GODMODE":
+            runGodMode();
+            break;
+
+        default:
+            alert("NIEZNANY KOD. DOSTĘP ODRZUCONY.");
+    }
+}
+
+
+document.addEventListener("click", function(event) {
+    const dot = event.target.closest("#secretDot");
+
+    if (dot) {
+        openSecretTerminal();
+    }
+});
