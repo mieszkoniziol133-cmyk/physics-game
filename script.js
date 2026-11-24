@@ -6727,32 +6727,105 @@ function showSecretEffect(title, description, className, symbol = "") {
     return overlay;
 }
 
-function runMatrix() {
-    const overlay = showSecretEffect(
-        "MATRIX",
-        "SYSTEM ZOSTAŁ PRZEJĘTY...",
-        "secret-matrix",
-        "010101"
-    );
 
-    const symbols = "01アイウエオカキクケコ";
-    const rain = document.createElement("div");
-    rain.style.fontSize = "22px";
-    rain.style.lineHeight = "1.5";
-    rain.style.opacity = "0.8";
-    rain.style.wordBreak = "break-all";
-    rain.style.maxWidth = "90%";
-    rain.style.maxHeight = "35vh";
-    rain.style.overflow = "hidden";
+let matrixAnimationId = null;
 
-    rain.textContent = Array.from(
-        { length: 500 },
-        () => symbols[Math.floor(Math.random() * symbols.length)]
-    ).join(" ");
+function stopMatrix() {
+    if (matrixAnimationId !== null) {
+        cancelAnimationFrame(matrixAnimationId);
+        matrixAnimationId = null;
+    }
 
-    overlay.insertBefore(rain, overlay.querySelector("h1"));
+    const canvas = document.getElementById("matrixBackground");
+
+    if (canvas) {
+        canvas.remove();
+    }
+
+    document.body.classList.remove("matrix-active");
 }
 
+function runMatrix() {
+    stopMatrix();
+
+    document.body.classList.add("matrix-active");
+
+    const canvas = document.createElement("canvas");
+    canvas.id = "matrixBackground";
+
+    document.body.prepend(canvas);
+
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    const symbols = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const fontSize = 16;
+
+    let columns = 0;
+    let drops = [];
+
+    function resizeMatrix() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        columns = Math.ceil(window.innerWidth / fontSize);
+
+        drops = Array.from(
+            { length: columns },
+            () => Math.random() * -100
+        );
+    }
+
+    resizeMatrix();
+
+    window.addEventListener("resize", resizeMatrix);
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.09)";
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const symbol = symbols[
+                Math.floor(Math.random() * symbols.length)
+            ];
+
+            const x = i * fontSize;
+            const y = drops[i] * fontSize;
+
+            ctx.fillStyle = "#00ff41";
+            ctx.fillText(symbol, x, y);
+
+            if (
+                y > window.innerHeight &&
+                Math.random() > 0.975
+            ) {
+                drops[i] = 0;
+            }
+
+            drops[i]++;
+        }
+
+        matrixAnimationId = requestAnimationFrame(drawMatrix);
+    }
+
+    drawMatrix();
+
+    canvas.dataset.matrixActive = "true";
+}
+function disableMatrix() {
+    stopMatrix();
+    alert("MATRIX DEACTIVATED");
+}
 function runNuclear() {
     showSecretEffect(
         "REAKTOR URUCHOMIONY",
@@ -6901,6 +6974,12 @@ function openSecretTerminal() {
 
         case "MATRIX":
             runMatrix();
+            break;
+
+        case "RESET":
+            disableMatrix();
+            closeSecretEffect();
+            document.querySelectorAll(".hidden-mode").forEach(el => el.remove());
             break;
 
         case "NUCLEAR":
