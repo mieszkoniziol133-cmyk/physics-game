@@ -1716,3 +1716,42 @@ label {
     background: #07101d;
     color: #55c8ff;
 }
+
+/* =================================
+   PHYSICS - MATRIX BACKGROUND
+================================= */
+
+#matrixBackground {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+body.matrix-active {
+    background: #000 !important;
+}
+
+body.matrix-active #matrixBackground {
+    z-index: 0;
+}
+
+body.matrix-active .screen,
+body.matrix-active header,
+body.matrix-active main,
+body.matrix-active footer {
+    position: relative;
+    z-index: 1;
+}
+
+body.matrix-active .screen {
+    background-color: rgba(0, 0, 0, 0.76);
+}
+
+body.matrix-active .card,
+body.matrix-active .panel {
+    background-color: rgba(0, 15, 5, 0.88);
+}
